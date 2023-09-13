@@ -2,7 +2,7 @@
  */
 const express = require("express");
 const bodyParser = require("body-parser");
-const db = require("./models");
+
 const app = express();
 const authRouter = require("./routes/v1");
 const swaggerUI = require("swagger-ui-express");
@@ -15,7 +15,7 @@ const port = process.env.PORT;
 const cors = require("cors");
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://localhost:5000"],
   })
 );
 
@@ -39,16 +39,16 @@ app.use("/v1", authRouter);
 
 const options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
       title: "AuthDawg API",
       version: "1.0.0",
       description: "A simple User Authentication API",
     },
     servers: [
-        {
-            url: 'http://localhost:5000'
-        }
+      {
+        url: "http://localhost:5000",
+      },
     ],
   },
   apis: ["./routes/*.js"],
