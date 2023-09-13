@@ -1,64 +1,63 @@
-/* ahhh... couldn't figure out how to get this to work in typescript 
-*/
-const express = require('express');
-const bodyParser = require('body-parser');
-const db = require('./models');
+/* ahhh... couldn't figure out how to get this to work in typescript
+ */
+const express = require("express");
+const bodyParser = require("body-parser");
+const db = require("./models");
 const app = express();
+const authRouter = require("./routes/v1");
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 const port = process.env.PORT;
 
-const cors = require('cors');
-app.use(cors({
-    origin: 'http://localhost:3000'
-    // origin: 'https://productivitypal.vercel.app'
-}));
-
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 app.use(bodyParser.json());
 
-/** 
- * API endpoints
+app.use("/v1", authRouter);
+
+/**
+ * swagger options
  */
+// const options = {
+//     swaggerDefinition: {
+//       info: {
+//         title: "AuthDawg API",
+//         version: "1.0.0",
+//         description: "A simple User Authentication API",
+//       },
+//       apis: ["./routes/*.js"],    // <=this was the cause of the trouble... should be under options
+//     },
+//   };
 
-// Service to create a new user
-app.post('/v1/createNewUser', async (req, res) => {
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: "AuthDawg API",
+      version: "1.0.0",
+      description: "A simple User Authentication API",
+    },
+    servers: [
+        {
+            url: 'http://localhost:5000'
+        }
+    ],
+  },
+  apis: ["./routes/*.js"],
+};
 
-    // TODO: figure out how to catch encrypted credentials
-    // console.log(req);
-    console.log('Request to create new user...');
-    // console.log(`Request body: ${JSON.stringify(req.body)}`);
-    // console.log(`Request header credentials: ${JSON.stringify(req.headers.authorization)}`);
-    const { username, password } = req.body;
+const specs = swaggerJsDoc(options);
 
-    // validate the username doesn't already exist
-    const userExists = await db.User.findOne({ where: { username } });
-    if (!userExists) {
-        db.User.create({ username, password })
-            .then((user) => res.sendStatus(201))
-            .catch((error) => {
-                res.status(500).send(error);
-            });
-    } else {
-        res.status(400).send('Username already exists');
-    }
-
-
-});
-
-// Service to authenticate a user's credentials for log-in
-app.get('/v1/authenticateUser', async (req, res) => {
-    const { username, password } = req.body;
-    const user = await db.User.findOne({ where: { username } });
-    if (user && user.password === password) {
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(401);
-    }
-});
-
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.listen(port, () => {
-    console.log(`[server]: Server is running at htpp://localhost:${port}`);
-}); 
+  console.log(`[server]: Server is running at http://localhost:${port}`);
+});
