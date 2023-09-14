@@ -79,10 +79,6 @@ const db = require("../models");
 // Service to create a new user
 router.post("/createNewUser", async (req, res) => {
     // TODO: figure out how to catch encrypted credentials
-    // console.log(req);
-    console.log("Request to create new user...");
-    // console.log(`Request body: ${JSON.stringify(req.body)}`);
-    // console.log(`Request header credentials: ${JSON.stringify(req.headers.authorization)}`);
     const { username, password } = req.body;
   
     // validate the username doesn't already exist
