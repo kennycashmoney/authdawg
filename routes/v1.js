@@ -3,10 +3,6 @@ const router = express.Router();
 const db = require("../models");
 
 /**
- * API endpoints
- */
-
-/**
  * @swagger
  * components:
  *  schemas:
@@ -46,8 +42,10 @@ const db = require("../models");
 /**
  * @swagger
  * tags:
- *  name: Users
- *  description: The coolest user authorization API
+ *  - name: Users
+ *    description: The coolest user authorization API
+ *  - name: Testing123
+ *    description: is this thing on? 
  */
 
 /**
@@ -101,8 +99,34 @@ router.post("/createNewUser", async (req, res) => {
     }
   });
   
+/**
+ * @swagger
+ * /v1/authenticateUser:
+ *  post:
+ *      summary: Authenticates a username and password match the database
+ *      tags: [Users]
+ *      description: Authenticate the username and password are valid
+ *      requestBody:
+ *          description: User information to create a new user
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          username: 
+ *                              type: string
+ *                          password:       
+ *                              type: string
+ *      responses: 
+ *          200:
+ *              description: successfully authenticated a user
+ *          401:
+ *              description: failed to authenticate a user. username and/or password are invalid
+ */
+
   // Service to authenticate a user's credentials for log-in
-  router.get("/authenticateUser", async (req, res) => {
+  router.post("/authenticateUser", async (req, res) => {
     const { username, password } = req.body;
     const user = await db.User.findOne({ where: { username } });
     if (user && user.password === password) {
@@ -118,6 +142,7 @@ router.post("/createNewUser", async (req, res) => {
  * /v1:
  *  get:
  *      summary: do a stupid test of the routing
+ *      tags: [Testing123]
  *      responses: 
  *          200:
  *              description: API will say 'hullo!'
