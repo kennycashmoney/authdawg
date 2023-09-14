@@ -10,12 +10,12 @@ const swaggerJsDoc = require("swagger-jsdoc");
 
 const dotenv = require("dotenv");
 dotenv.config();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
 const cors = require("cors");
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5000"],
+    origin: ["http://localhost:3000"],  // this is for the todo app that runs on 3000 in dev
   })
 );
 
@@ -26,17 +26,6 @@ app.use("/v1", authRouter);
 /**
  * swagger options
  */
-// const options = {
-//     swaggerDefinition: {
-//       info: {
-//         title: "AuthDawg API",
-//         version: "1.0.0",
-//         description: "A simple User Authentication API",
-//       },
-//       apis: ["./routes/*.js"],    // <=this was the cause of the trouble... should be under options
-//     },
-//   };
-
 const options = {
   definition: {
     openapi: "3.0.0",
